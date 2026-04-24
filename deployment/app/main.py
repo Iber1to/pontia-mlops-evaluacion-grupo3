@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request
+from pydantic import BaseModel, Field
+from typing import Literal
 import os
 from contextlib import asynccontextmanager
 import time
@@ -9,6 +11,46 @@ import requests
 import tempfile
 import pandas as pd
 from pathlib import Path
+
+class PredictionInput(BaseModel):
+    # Definicion del modelo de datos para la documentacion
+    # Validaciones numéricas: evitamos edades negativas o ingresos imposibles por ejemplo
+    age: int = Field(..., gt=0, lt=120, description="Edad del individuo", example=39)
+    workclass: str = Field(..., example="State-gov")
+    fnlwgt: int = Field(..., gt=0, description="Final weight sugerido por el censo", example=77516)
+    education: str = Field(..., example="Bachelors")
+    education_num: int = Field(..., alias="education-num", gt=0, le=16, example=13)
+    marital_status: str = Field(..., alias="marital-status", example="Never-married")
+    occupation: str = Field(..., example="Adm-clerical")
+    relationship: str = Field(..., example="Not-in-family")
+    race: str = Field(..., example="White")
+    # Restricción de valores específicos
+    sex: Literal["Male", "Female"] = Field(..., example="Male")
+    capital_gain: int = Field(..., alias="capital-gain", ge=0, example=2174)
+    capital_loss: int = Field(..., alias="capital-loss", ge=0, example=0)
+    hours_per_week: int = Field(..., alias="hours-per-week", ge=1, le=100, example=40)
+    native_country: str = Field(..., alias="native-country", example="United-States")
+
+    class Config:
+        populate_by_name = True 
+        json_schema_extra = {
+            "example": {
+                "age": 39,
+                "workclass": "State-gov",
+                "fnlwgt": 77516,
+                "education": "Bachelors",
+                "education-num": 13,
+                "marital-status": "Never-married",
+                "occupation": "Adm-clerical",
+                "relationship": "Not-in-family",
+                "race": "White",
+                "sex": "Male",
+                "capital-gain": 2174,
+                "capital-loss": 0,
+                "hours-per-week": 40,
+                "native-country": "United-States"
+            }
+        }
 
 metrics = {"total_predictions": 0}
 
