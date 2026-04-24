@@ -134,7 +134,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get("/health")
+@app.get("/health",
+    summary = "Verificar estado del servicio",
+    description = "Comprueba si la API está en línea y operativa."
+    )
 def health():
     return {"status": "ok"}
 
@@ -170,6 +173,10 @@ async def predict(input_data: PredictionInput):
         logger.error(f"Prediction failed: {e}")
         return {"error": str(e)}, 500
 
-@app.get("/metrics", response_class=PlainTextResponse)
+@app.get("/metrics", 
+         response_class=PlainTextResponse,
+         summary="Obtener métricas de rendimiento",
+         description="Devuelve el conteo total de predicciones realizadas."
+         )
 def metrics_endpoint():
     return f'total_predictions {metrics["total_predictions"]}\n'
