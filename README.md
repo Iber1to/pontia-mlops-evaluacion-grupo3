@@ -64,9 +64,14 @@ El proyecto asegura la integridad del modelo mediante el siguiente flujo:
 Para probar el pipeline o la API en tu máquina local:
 
 1. **Instalar dependencias:** `pip install -r requirements.txt`
-2. **Entrenar y probar:** `python src/main.py && pytest`
-3. **Levantar API:** `uvicorn deployment.app.main:app --reload`
+2. **Configuración de Variables de Entorno (.env):** Crea un archivo llamado `.env` en la raíz del proyecto para que la API pueda localizar tu repositorio de GitHub:
+```text
+GITHUB_REPO=usuario/nombre-del-repo
+```
+3. **Entrenar y probar:** `python src/main.py && pytest`
+4. **Levantar API:** `uvicorn deployment.app.main:app --reload`
 
+> **Nota:** Asegúrate de que el archivo `.env` esté incluido en tu `.gitignore` para no subir información sensible o específica de tu entorno.
 
 ### Despliegue en Render
 Este proyecto utiliza **Infrastructure as Code (IaC)** mediante un archivo `render.yaml`. Esto permite un despliegue facil con toda la configuración predefinida.

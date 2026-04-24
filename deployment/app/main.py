@@ -35,6 +35,7 @@ class PredictionInput(BaseModel):
     native_country: str = Field(..., alias="native-country", example="United-States")
 
     class Config:
+        title = "Datos de Entrada del Censo"
         populate_by_name = True 
         json_schema_extra = {
             "example": {
@@ -54,6 +55,12 @@ class PredictionInput(BaseModel):
                 "native-country": "United-States"
             }
         }
+class PredictionOutput(BaseModel):
+    # Definicion del modelo de datos para la documentacion
+    prediction: list[int] = Field(..., description="Resultado de la clasificación: 0 para <=50K, 1 para >50K")
+    duration_seconds: float = Field(..., description="Tiempo de ejecución de la inferencia en segundos")
+    class Config:
+        title = "Resultado de la Predicción" 
 
 metrics = {"total_predictions": 0}
 
@@ -142,6 +149,7 @@ def health():
     return {"status": "ok"}
 
 @app.post("/predict",
+        response_model=PredictionOutput,
         summary="Realiza una predicción de ingresos",
         description="Recibe un objeto JSON con datos del censo y devuelve si la persona gana >50K o <=50K usando un RandomForest."
         )
