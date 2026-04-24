@@ -11,6 +11,9 @@ import requests
 import tempfile
 import pandas as pd
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class PredictionInput(BaseModel):
     # Definicion del modelo de datos para la documentacion
