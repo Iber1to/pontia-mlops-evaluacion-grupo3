@@ -138,8 +138,11 @@ app = FastAPI(lifespan=lifespan)
 def health():
     return {"status": "ok"}
 
-@app.post("/predict")
-async def predict(request: Request):
+@app.post("/predict",
+        summary="Realiza una predicción de ingresos",
+        description="Recibe un objeto JSON con datos del censo y devuelve si la persona gana >50K o <=50K usando un RandomForest."
+        )
+async def predict(input_data: PredictionInput):
     global model, scaler, encoders
     start = time.time()
     

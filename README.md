@@ -84,7 +84,7 @@ La API gestiona automáticamente el ciclo de vida de los artefactos. Al iniciar,
 | /predict | POST | Procesa datos y devuelve la predicción del modelo. |
 | /metrics | GET | Expone el conteo total de predicciones (PlainText). |
 | /docs | GET | Documentación interactiva y pruebas en vivo (Swagger). |
-> **Interactividad:** Puedes probar la API en vivo accediendo a `/docs` (Swagger UI) una vez desplegada.
+> **Interactividad:** Puedes probar la API en vivo accediendo a `http://localhost:8000/docs` (Swagger UI) una vez desplegada.
 
 ## Ejemplos
 
