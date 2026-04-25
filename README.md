@@ -8,7 +8,6 @@ El proyecto está dividido en dos partes independientes: un **Pipeline de Entren
 
 - [Integrantes del proyecto](#integrantes-del-proyecto)
 - [Requisitos y Stack Tecnológico](#requisitos-y-stack-tecnológico)
-- [Funcionamiento del Sistema](#funcionamiento-del-sistema)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Arquitectura y Flujo de Trabajo (CI/CD)](#arquitectura-y-flujo-de-trabajo-cicd)
 - [Instalación y Configuración](#instalación-y-configuración)
@@ -35,20 +34,6 @@ El proyecto está dividido en dos partes independientes: un **Pipeline de Entren
 *   **Testing**: `Pytest` para validación de código y calidad del modelo.
 *   **Infraestructura**: `Render` y `GitHub Releases`.
 
-## Funcionamiento del Sistema
-
-El proyecto opera en dos modos distintos según la necesidad:
-
-### A. Parte de Entrenamiento (src/)
-Se utiliza para generar el modelo desde cero. Requiere los datos en local y ejecuta las pruebas de calidad.
-* **Comando:** `python src/main.py && pytest`
-* **Resultado:** Genera archivos `.pkl` en la carpeta `models/` listos para ser publicados.
-
-### B. Parte de Servicio (deployment/)
-Es la API que utiliza el usuario final. No necesita entrenar ni tener los datos originales, ya que descarga el modelo pre-entrenado.
-* **Comando:** `uvicorn deployment.app.main:app --reload`
-* **Resultado:** Endpoint interactivo en `/docs` para realizar predicciones en tiempo real.
-
 ## Estructura del Proyecto
 El código sigue una arquitectura modular, separando la lógica de entrenamiento, la infraestructura de despliegue y la validación de calidad en capas independientes:
 
@@ -57,7 +42,7 @@ El código sigue una arquitectura modular, separando la lógica de entrenamiento
     * **`model.py`**: Definición, configuración e instanciación del modelo.
     * **`evaluate.py`**: Módulo de evaluación, muestra precision y clasificación.
     * **`main.py`**: Orquestador del pipeline; ejecuta el flujo completo desde la carga hasta el entrenamiento.
-* **`deployment/`**: Infraestructura necesaria para servir el modelo en producción.
+* **`deployment/`**: Infraestructura necesaria para servir el modelo en producción. Toma el modelo validado como artefacto.
     * **`app/main.py`**: Punto de entrada de la **API**. Gestiona las peticiones y devuelve predicciones y metricas.
     * **`requirements.txt`**: Dependencias para el entorno de ejecución. Modelo ya entrenado asi que deben ser lo mas ligeras posibles.
 * **`unit_tests/`**: Pruebas unitarias aisladas para garantizar que cada componentem funciona correctamente.
@@ -70,6 +55,17 @@ El código sigue una arquitectura modular, separando la lógica de entrenamiento
 
 
 ## Arquitectura y Flujo de Trabajo (CI/CD)
+El proyecto opera en dos modos distintos según la necesidad:
+
+### A. Parte de Entrenamiento (src/)
+Se utiliza para generar el modelo desde cero. Requiere los datos en local y ejecuta las pruebas de calidad.
+* **Comando:** `python src/main.py && pytest`
+* **Resultado:** Genera archivos `.pkl` en la carpeta `models/` listos para ser publicados.
+
+### B. Parte de Servicio (deployment/)
+Es la API que utiliza el usuario final. No necesita entrenar ni tener los datos originales, ya que descarga el modelo pre-entrenado.
+* **Comando:** `uvicorn deployment.app.main:app --reload`
+* **Resultado:** Endpoint interactivo en `/docs` para realizar predicciones en tiempo real.
 
 El proyecto asegura la integridad del modelo mediante el siguiente flujo:
 ```mermaid
@@ -96,11 +92,6 @@ graph TD
     style I fill:#2ecc71,color:#fff
     style J fill:#2ecc71,color:#fff
 ```
-
-1. **Validación de Código:** Ejecución de `unit_tests` para verificar la lógica de `src/`.
-2. **Entrenamiento:** Generación del modelo mediante el pipeline principal.
-3. **Validación de Modelo:** Los `model_tests` certifican la precisión del RandomForest antes de su liberación.
-4. **Despliegue:** La carpeta `deployment/` toma el modelo validado para servirlo mediante una API.
 
 ## Instalación y Configuración
 
