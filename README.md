@@ -5,11 +5,25 @@ Este proyecto implementa un ecosistema de **MLOps** para la clasificación de in
 
 ## Tabla de contenedores
 
+- [Requisitos y Stack Tecnológico](#requisitos-y-stack-tecnológico)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Ciclo de vida (CI/CD)](#ciclo-de-vida-cicd)
 - [Instalación y Configuración](#instalación-y-configuración)
 - [Ejecución y Despliegue](#ejecución-y-despliegue)
 - [Documentación de la API](#documentación-de-la-api)
+
+## Requisitos y Stack Tecnológico
+
+### 1. Entorno de Ejecución
+*   **Python 3.10**: Versión de referencia utilizada para el desarrollo y el despliegue en la nube.
+*   **Configuración de Acceso**: Es imprescindible configurar la variable de entorno `GITHUB_REPO` para que la API pueda localizar y descargar los artefactos (`.pkl`) desde los Releases.
+
+### 2. Stack Tecnológico (Librerías Principales)
+*   **Machine Learning**: `scikit-learn` (RandomForest), `pandas` y `joblib`.
+*   **Servicio Web**: `FastAPI` y `Uvicorn`.
+*   **Validación de Datos**: `Pydantic` (v2).
+*   **Testing**: `Pytest` para validación de código y calidad del modelo.
+*   **Infraestructura**: `Render` y `GitHub Releases`.
 
 ## Estructura del Proyecto
 El código sigue una arquitectura modular, separando la lógica de entrenamiento, la infraestructura de despliegue y la validación de calidad en capas independientes:
