@@ -79,7 +79,7 @@ GITHUB_REPO=usuario/nombre-del-repo
 ### Despliegue Local
 Para probar el pipeline o la API en tu máquina local:
 
-1. **Instalar dependencias:** `pip install -r requirements.txt`
+1. **Instalar dependencias** (solo si no lo has hecho antes): `pip install -r requirements.txt`
 2. **Entrenar y probar:** `python src/main.py && pytest`
 3. **Levantar API:** `uvicorn deployment.app.main:app --reload`
 
