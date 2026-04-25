@@ -1,6 +1,4 @@
-# Título del proyecto
-
-**MLOps Pipeline: Sistema de Clasificación con RandomForest y Despliegue Automatizado**
+# MLOps Pipeline: Sistema de Clasificación con RandomForest y Despliegue Automatizado
 
 Este proyecto implementa un ecosistema de **MLOps** para la clasificación de ingresos basada en el dataset Census Income (Adult). El sistema automatiza todo el ciclo de vida del modelo: desde la ingesta y preprocesamiento de datos tabulares, pasando por un pipeline de entrenamiento robusto con **RandomForest**, hasta el despliegue de una **API REST** escalable en la nube. La solución tiene un enfoque claro en la calidad del software, integrando validación de datos con Pydantic, pruebas automatizadas con Pytest y despliegue continuo mediante **Render Blueprints**.
 
