@@ -216,7 +216,6 @@ La corrección mejora el workflow `Build Model`.
 ### Problema 
 Error de ejecución en el entorno de producción: ModuleNotFoundError: No module named 'app'. El servicio falló durante la fase de inicialización (bootstrapping).
 
-![discrepancia_ruta_configuracion](../docs/evidencias/issues_render_5.1.png)
 
 ### Causa 
 El archivo de orquestación render.yml contenía rutas relativas incorrectas para los comandos de construcción e inicio. No se estaba considerando el directorio raíz deployment/, donde se encuentran alojados tanto el archivo de dependencias (requirements.txt) como el punto de entrada de la aplicación (main.py).
@@ -242,16 +241,16 @@ startCommand: "uvicorn deployment.app.main:app --host 0.0.0.0 --port $PORT"
 ### Problema 
 Fallo crítico durante la descarga de artefactos de Machine Learning. Mensaje de error en logs: "requests.exceptions.HTTPError: 403 Client Error: rate limit exceeded".
 
-![limitaciones_api_github](../docs/evidencias/issues_render_5.2.png)
 
 ### Causa
 La lógica de la aplicación realiza peticiones no autenticadas a la API de GitHub para obtener la última versión del modelo entrenado. GitHub impone un límite estricto de 60 solicitudes por hora para direcciones IP compartidas (como las de los nodos de construcción de Render), el cual fue excedido debido a múltiples intentos de despliegue consecutivos.
 
 ### Solución
 
-Se implementó una estrategia de espera técnica para permitir el restablecimiento de la cuota de la API por parte de GitHub. El despliegue se reintentó tras un intervalo de tiempo, logrando un despliegue exitoso. Como mejora futura, se recomienda el uso de un GitHub Token de solo lectura para evitar limitaciones por IP.
+Se implementó la autenticación de peticiones mediante un Personal Access Token (PAT) de GitHub, configurado como variable de entorno (GITHUB_TOKEN).
 
-![despliegue_exitoso_render](../docs/evidencias/issues_render_5.2_solution.png)
+Esta medida eleva el rate limit de la API de 60 a 5,000 solicitudes por hora, desvinculando la cuota de la dirección IP compartida del entorno de ejecución (Render) y asegurando la disponibilidad persistente para la descarga de artefactos.
+
 
 
 
