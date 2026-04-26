@@ -595,9 +595,9 @@ Configuración esperada:
 | Runtime | Python |
 | Branch | main |
 | Root Directory | deployment |
-| Build Command | `pip install -r requirements.txt` |
-| Start Command | `uvicorn app.main:app --host 0.0.0.0 --port 8080` |
-| Port | 8080 |
+| Build Command | `pip install --upgrade pip && pip install -r deployment/requirements.txt` |
+| Start Command | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+| Port | $PORT |
 | Plan | Free |
 
 URL pública de Render:
