@@ -1,6 +1,7 @@
 name: Build Model
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,15 +11,17 @@ permissions:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-latest
-    steps:      
+
+    steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -28,25 +31,47 @@ jobs:
       - name: Download Adult dataset
         run: |
           mkdir -p data/raw
-          curl -o data/raw/adult.data https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
-          curl -o data/raw/adult.test https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test
-      
+          curl -L --fail -o data/raw/adult.data https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
+          curl -L --fail -o data/raw/adult.test https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test
+
       - name: Train and save model
+        env:
+          RUN_ID: ${{ github.run_id }}
+          MODEL_VERSION: model-${{ github.run_number }}
         run: |
           python src/main.py
-          
-      - name: Run model tests
-        run: python model_tests/test_model.py
 
-      - name: Upload model to GitHub Release
-        uses: softprops/action-gh-release@v1
+      - name: Run model tests
+        run: |
+          pytest model_tests -v
+
+      - name: Upload model artifacts
+        uses: actions/upload-artifact@v4
         with:
+          name: trained-model-${{ github.run_number }}
+          path: |
+            models/model.pkl
+            models/scaler.pkl
+            models/encoders.pkl
+            training.log
+          if-no-files-found: error
+
+      - name: Register model in GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: model-${{ github.run_number }}
+          name: Model ${{ github.run_number }}
+          body: |
+            Modelo entrenado automáticamente desde GitHub Actions.
+
+            Run ID: ${{ github.run_id }}
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
           files: |
             models/model.pkl
             models/scaler.pkl
             models/encoders.pkl
-          tag_name: model-${{ github.run_number }}
-          body: "Model trained on ${{ github.event.head_commit.timestamp }}"
+            training.log
           draft: false
           prerelease: false
         env:
