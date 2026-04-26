@@ -603,21 +603,15 @@ Configuración esperada:
 URL pública de Render:
 
 ```text
-PENDIENTE: añadir URL final de Render
-```
-
-Ejemplo:
-
-```text
-https://NOMBRE-SERVICIO.onrender.com
+https://adult-income-api-3p8k.onrender.com
 ```
 
 Endpoints en Render:
 
 ```text
-https://NOMBRE-SERVICIO.onrender.com/health
-https://NOMBRE-SERVICIO.onrender.com/docs
-https://NOMBRE-SERVICIO.onrender.com/metrics
+https://adult-income-api-3p8k.onrender.com/health
+https://adult-income-api-3p8k.onrender.com/docs
+https://adult-income-api-3p8k.onrender.com/openapi.json
 ```
 
 ---
