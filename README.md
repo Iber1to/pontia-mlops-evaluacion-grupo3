@@ -57,6 +57,8 @@ El proyecto incorpora prácticas de DevOps como integración continua, build aut
 | Victor Méndez | Configuración y despliegue en Render |
 | David Baos | Pull Requests, reviews y flujo de integración |
 
+Este reparto es orientativo al final para agilizar el proyecto, todos hemos tocado en todo.  
+
 ---
 
 ## Repositorio
@@ -116,7 +118,10 @@ https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3
 │       ├── actions-build-green.png
 │       ├── actions-deploy-green.png
 │       ├── render-deployed.png
-│       └── api-test-render.png
+│       ├── api-docs-render.png
+│       ├── api-test-render.png
+│       ├── pr-review-approve.png
+│       └── pr-review-request-changes.png
 │
 ├── model_tests/
 │   └── test_model.py
@@ -162,14 +167,27 @@ El proyecto diferencia claramente entre entrenamiento e inferencia.
 
 ```mermaid
 graph TD
-    A[Dataset Adult] --> B[Preprocesamiento]
-    B --> C[Entrenamiento RandomForest]
-    C --> D[Validación del modelo]
-    D --> E[Artefactos .pkl]
-    E --> F[GitHub Release]
-    F --> G[API FastAPI]
-    G --> H[Render]
-    H --> I[Usuario consume /predict]
+    subgraph Parte1 [PARTE 1: Entrenamiento - Pipeline Local/CI]
+        A[Dataset Adult] --> B{1. Unit Tests}
+        B -- OK --> C[2. Entrenamiento RandomForest]
+        C --> D{3. Model Tests}
+        D -- Accuracy --> E[4. Publicar Release GitHub]
+    end
+
+    subgraph Parte2 [PARTE 2: Servicio - Local o Cloud]
+        E -.-> F[5. Despliegue API]
+        F --> G[6. Descarga Artefactos .pkl]
+        G --> H{7. Servicio Activo}
+        H --> I[Uso Local: localhost:8000]
+        H --> J[Uso Cloud: Render]
+    end
+
+    %% Estilos
+    style E fill:#f96,stroke:#333,stroke-width:2px
+    style Parte1 fill:#f5f5f5,stroke:#333,stroke-dasharray: 5 5
+    style Parte2 fill:#e1f5fe,stroke:#01579b
+    style I fill:#2ecc71,color:#fff
+    style J fill:#2ecc71,color:#fff
 ```
 
 ---
@@ -197,7 +215,7 @@ Registro de artefactos
       ↓
 Deploy Model pipeline
       ↓
-Render
+    Render
 ```
 
 ---
@@ -288,6 +306,7 @@ Ejecución:
 
 El despliegue automático se realiza mediante workflow_run, escuchando la finalización del workflow Build Model. De esta forma, el servicio no se despliega directamente desde un Pull Request, sino después de que los cambios hayan sido integrados en main, el modelo haya sido entrenado, los tests hayan pasado y los artefactos hayan sido registrados correctamente.
 
+```text
 Pull Request
       ↓
 Integration
@@ -300,7 +319,8 @@ Build Model
       ↓
 Deploy Model
       ↓
-Render
+   Render
+```
 
 ---
 
@@ -435,7 +455,7 @@ http://localhost:8000/docs
 La API expone endpoints para comprobar estado, realizar predicciones y consultar métricas básicas.
 
 | Endpoint | Método | Descripción |
-| --- | --- |
+| --- | --- | --- |
 | `/health` | GET | Comprueba que el servicio está activo |
 | `/predict` | POST | Recibe datos tabulares y devuelve la predicción del modelo |
 | `/metrics` | GET | Devuelve métricas básicas del servicio |
@@ -762,10 +782,10 @@ Este archivo incluye, entre otros:
 | Requisito | Estado |
 | --- | --- |
 | Repositorio GitHub creado | Completado |
-| Workflows de GitHub Actions | Completado / en revisión |
+| Workflows de GitHub Actions | Completado |
 | Pipeline Integration | Completado |
-| Pipeline Build | Completado / pendiente de validación final |
-| Pipeline Deploy | Completado / pendiente de validación final |
+| Pipeline Build | Completado |
+| Pipeline Deploy | Completado |
 | Secrets configurados | Completado |
 | Ruleset sobre `main` | Completado |
 | Pull Requests con review | Pendiente de completar mínimo 3 integrados |
@@ -774,7 +794,7 @@ Este archivo incluye, entre otros:
 | README completo | En progreso |
 | Rollback documentado | Completado |
 | Evidencias | En progreso |
-| Issues documentados | Completado / en progreso |
+| Issues documentados | En progreso |
 
 ---
 
