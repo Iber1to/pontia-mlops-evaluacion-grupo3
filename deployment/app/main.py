@@ -158,7 +158,7 @@ async def predict(input_data: PredictionInput):
     start = time.time()
     
     try:
-        data = await request.json()
+        data = input_data.model_dump(by_alias=True)
         df = pd.DataFrame([data])
         
         # Apply label encoders to categorical features
@@ -171,11 +171,11 @@ async def predict(input_data: PredictionInput):
         
         # Predict
         prediction = model.predict(df_scaled)
-        duration = time.time() - start
+        res_duration = time.time() - start
         metrics["total_predictions"] += 1
         logger.info(f"Prediction: input={data}, output={prediction.tolist()}, time={duration:.3f}s")
         
-        return {"prediction": prediction.tolist(), "duration": duration}
+        return {"prediction": prediction.tolist(), "duration_seconds": res_duration}
     
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
