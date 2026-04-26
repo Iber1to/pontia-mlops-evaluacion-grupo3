@@ -38,4 +38,3 @@ La rama `main` quedó protegida con:
 
 - El workflow podrá ejecutarse manualmente desde GitHub Actions.
 - El build seguirá ejecutándose automáticamente tras merge a `main
-
