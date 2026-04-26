@@ -208,3 +208,50 @@ El test dejó de fallar por datos  sin transformar y ahora valida el modelo de f
 La corrección mejora el workflow `Build Model`.
 
 ---
+
+## 5.Errores en el despliegue en Render
+
+### 5.1 Discrepancia en las rutas de configuración
+
+### Problema 
+Error de ejecución en el entorno de producción: ModuleNotFoundError: No module named 'app'. El servicio falló durante la fase de inicialización (bootstrapping).
+
+![discrepancia_ruta_configuracion](../docs/evidencias/issues_render_5.1.png)
+
+### Causa 
+El archivo de orquestación render.yml contenía rutas relativas incorrectas para los comandos de construcción e inicio. No se estaba considerando el directorio raíz deployment/, donde se encuentran alojados tanto el archivo de dependencias (requirements.txt) como el punto de entrada de la aplicación (main.py).
+
+#### Configuración errónea inicial
+
+```text
+buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
+startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+```
+
+### Solución
+Se normalizaron las rutas en el archivo render.yml para reflejar la estructura jerárquica del repositorio.
+
+#### Configuración corregida
+
+```text
+buildCommand: "pip install --upgrade pip && pip install -r deployment/requirements.txt"
+startCommand: "uvicorn deployment.app.main:app --host 0.0.0.0 --port $PORT"
+```
+### 5.2 Limitaciones en la API de GitHub
+
+### Problema 
+Fallo crítico durante la descarga de artefactos de Machine Learning. Mensaje de error en logs: "requests.exceptions.HTTPError: 403 Client Error: rate limit exceeded".
+
+![limitaciones_api_github](../docs/evidencias/issues_render_5.2.png)
+
+### Causa
+La lógica de la aplicación realiza peticiones no autenticadas a la API de GitHub para obtener la última versión del modelo entrenado. GitHub impone un límite estricto de 60 solicitudes por hora para direcciones IP compartidas (como las de los nodos de construcción de Render), el cual fue excedido debido a múltiples intentos de despliegue consecutivos.
+
+### Solución
+
+Se implementó una estrategia de espera técnica para permitir el restablecimiento de la cuota de la API por parte de GitHub. El despliegue se reintentó tras un intervalo de tiempo, logrando un despliegue exitoso. Como mejora futura, se recomienda el uso de un GitHub Token de solo lectura para evitar limitaciones por IP.
+
+![despliegue_exitoso_render](../docs/evidencias/issues_render_5.2_solution.png)
+
+
+
