@@ -173,7 +173,7 @@ async def predict(input_data: PredictionInput):
         prediction = model.predict(df_scaled)
         res_duration = time.time() - start
         metrics["total_predictions"] += 1
-        logger.info(f"Prediction: input={data}, output={prediction.tolist()}, time={duration:.3f}s")
+        logger.info(f"Prediction: input={data}, output={prediction.tolist()}, time={res_duration:.3f}s")
         
         return {"prediction": prediction.tolist(), "duration_seconds": res_duration}
     
