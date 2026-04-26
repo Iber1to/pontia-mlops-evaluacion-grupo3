@@ -3,15 +3,22 @@ name: Deploy Model
 on:
   workflow_dispatch:
 
+  workflow_run:
+    workflows:
+      - Build Model
+    types:
+      - completed
+    branches:
+      - main
+
 jobs:
   deploy:
+    name: deploy
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Deploy to Render
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Trigger Render deploy hook
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
