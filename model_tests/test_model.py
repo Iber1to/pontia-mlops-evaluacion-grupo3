@@ -7,11 +7,10 @@ import pytest
 from sklearn.metrics import accuracy_score
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SRC_DIR = PROJECT_ROOT / "src"
 
-sys.path.append(str(SRC_DIR))
+sys.path.insert(0, str(PROJECT_ROOT))
 
-from data_loader import load_data, preprocess_data  # noqa: E402
+from src.data_loader import load_data, preprocess_data  # noqa: E402
 
 
 MODEL_PATH = PROJECT_ROOT / "models" / "model.pkl"
