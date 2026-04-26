@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request
+from pydantic import BaseModel, Field
+from typing import Literal
 import os
 from contextlib import asynccontextmanager
 import time
@@ -9,6 +11,56 @@ import requests
 import tempfile
 import pandas as pd
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class PredictionInput(BaseModel):
+    # Definicion del modelo de datos para la documentacion
+    # Validaciones numéricas: evitamos edades negativas o ingresos imposibles por ejemplo
+    age: int = Field(..., gt=0, lt=120, description="Edad del individuo", example=39)
+    workclass: str = Field(..., example="State-gov")
+    fnlwgt: int = Field(..., gt=0, description="Final weight sugerido por el censo", example=77516)
+    education: str = Field(..., example="Bachelors")
+    education_num: int = Field(..., alias="education-num", gt=0, le=16, example=13)
+    marital_status: str = Field(..., alias="marital-status", example="Never-married")
+    occupation: str = Field(..., example="Adm-clerical")
+    relationship: str = Field(..., example="Not-in-family")
+    race: str = Field(..., example="White")
+    # Restricción de valores específicos
+    sex: Literal["Male", "Female"] = Field(..., example="Male")
+    capital_gain: int = Field(..., alias="capital-gain", ge=0, example=2174)
+    capital_loss: int = Field(..., alias="capital-loss", ge=0, example=0)
+    hours_per_week: int = Field(..., alias="hours-per-week", ge=1, le=100, example=40)
+    native_country: str = Field(..., alias="native-country", example="United-States")
+
+    class Config:
+        title = "Datos de Entrada del Censo"
+        populate_by_name = True 
+        json_schema_extra = {
+            "example": {
+                "age": 39,
+                "workclass": "State-gov",
+                "fnlwgt": 77516,
+                "education": "Bachelors",
+                "education-num": 13,
+                "marital-status": "Never-married",
+                "occupation": "Adm-clerical",
+                "relationship": "Not-in-family",
+                "race": "White",
+                "sex": "Male",
+                "capital-gain": 2174,
+                "capital-loss": 0,
+                "hours-per-week": 40,
+                "native-country": "United-States"
+            }
+        }
+class PredictionOutput(BaseModel):
+    # Definicion del modelo de datos para la documentacion
+    prediction: list[int] = Field(..., description="Resultado de la clasificación: 0 para <=50K, 1 para >50K")
+    duration_seconds: float = Field(..., description="Tiempo de ejecución de la inferencia en segundos")
+    class Config:
+        title = "Resultado de la Predicción" 
 
 metrics = {"total_predictions": 0}
 
@@ -89,17 +141,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get("/health")
+@app.get("/health",
+    summary = "Verificar estado del servicio",
+    description = "Comprueba si la API está en línea y operativa."
+    )
 def health():
     return {"status": "ok"}
 
-@app.post("/predict")
-async def predict(request: Request):
+@app.post("/predict",
+        response_model=PredictionOutput,
+        summary="Realiza una predicción de ingresos",
+        description="Recibe un objeto JSON con datos del censo y devuelve si la persona gana >50K o <=50K usando un RandomForest."
+        )
+async def predict(input_data: PredictionInput):
     global model, scaler, encoders
     start = time.time()
     
     try:
-        data = await request.json()
+        data = input_data.model_dump(by_alias=True)
         df = pd.DataFrame([data])
         
         # Apply label encoders to categorical features
@@ -112,16 +171,20 @@ async def predict(request: Request):
         
         # Predict
         prediction = model.predict(df_scaled)
-        duration = time.time() - start
+        res_duration = time.time() - start
         metrics["total_predictions"] += 1
-        logger.info(f"Prediction: input={data}, output={prediction.tolist()}, time={duration:.3f}s")
+        logger.info(f"Prediction: input={data}, output={prediction.tolist()}, time={res_duration:.3f}s")
         
-        return {"prediction": prediction.tolist(), "duration": duration}
+        return {"prediction": prediction.tolist(), "duration_seconds": res_duration}
     
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
         return {"error": str(e)}, 500
 
-@app.get("/metrics", response_class=PlainTextResponse)
+@app.get("/metrics", 
+         response_class=PlainTextResponse,
+         summary="Obtener métricas de rendimiento",
+         description="Devuelve el conteo total de predicciones realizadas."
+         )
 def metrics_endpoint():
     return f'total_predictions {metrics["total_predictions"]}\n'
