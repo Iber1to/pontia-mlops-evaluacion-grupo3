@@ -37,11 +37,11 @@ La rama `main` quedó protegida con:
 ### Validación
 
 - El workflow podrá ejecutarse manualmente desde GitHub Actions.
-- El build seguirá ejecutándose automáticamente tras merge a `main
+- El build seguirá ejecutándose automáticamente tras merge a `main`.
 
 ---
 
-## 3.Mejora del flujo CD: deploy automático tras build correcto
+## 3. Mejora del flujo CD: deploy automático tras build correcto
 
 ### Situación inicial
 
@@ -68,7 +68,7 @@ PR → Integration → Review → Merge a main → Build Model → Deploy Model 
 
 ---
 
-## 4.Error en el test de accuracy del modelo
+## 4. Error en el test de accuracy del modelo
 
 ### Problema
 
