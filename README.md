@@ -119,7 +119,8 @@ https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3
 │       ├── actions-deploy-green.png
 │       ├── render-deployed.png
 │       ├── api-docs-render.png
-│       ├── api-test-render.png
+│       ├── api-metrics-render.png
+│       ├── api-health-render.png
 │       ├── pr-review-approve.png
 │       └── pr-review-request-changes.png
 │
@@ -603,21 +604,15 @@ Configuración esperada:
 URL pública de Render:
 
 ```text
-PENDIENTE: añadir URL final de Render
-```
-
-Ejemplo:
-
-```text
-https://NOMBRE-SERVICIO.onrender.com
+https://adult-income-api-3p8k.onrender.com/
 ```
 
 Endpoints en Render:
 
 ```text
-https://NOMBRE-SERVICIO.onrender.com/health
-https://NOMBRE-SERVICIO.onrender.com/docs
-https://NOMBRE-SERVICIO.onrender.com/metrics
+https://adult-income-api-3p8k.onrender.com/health
+https://adult-income-api-3p8k.onrender.com/docs
+https://adult-income-api-3p8k.onrender.com/metrics
 ```
 
 ---
@@ -703,21 +698,26 @@ También se han usado revisiones con `Request changes` cuando se han detectado p
 - Inconsistencias en el endpoint `/predict`.
 - Diferencias entre el modelo de respuesta esperado y el body devuelto.
 
-PRs mínimos requeridos:
+PRs realizados:
 
 ```text
-PENDIENTE: añadir enlaces a los 3 PRs integrados
+PR #1 - Enhance project documentation and API validation details
 https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/1
+
+PR #2 - Render blueprint for automated API deployment
 https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/2
-```
 
-Ejemplo:
+PR #3 - docs: add issues log
+https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/3
 
-```text
-PR #1 - Documentación y validación de API
-PR #2 - Render Blueprint
-PR #3 - Issues log y evidencias
-PR #4 - Corrección build workflow
+PR #4 - ci: add manual trigger to build workflow
+https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/4
+
+PR #5 - Trigger deployment after successful build
+https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/5
+
+PR #6 - Fix model accuracy preprocessing and data loader warnings
+https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3/pull/6
 ```
 
 ---
@@ -740,11 +740,10 @@ Evidencias previstas:
 | Pipeline Deploy en verde | `docs/evidencias/actions-deploy-green.png` |
 | Servicio Render desplegado | `docs/evidencias/render-deployed.png` |
 | Swagger de la API | `docs/evidencias/api-docs-render.png` |
-| Prueba de `/predict` | `docs/evidencias/api-test-render.png` |
+| Prueba de /predict | `docs/evidencias/api-metrics-render.png` |
+| Prueba de salud API | `docs/evidencias/api-health-render.png` |
 | Review con aprobación | `docs/evidencias/pr-review-approve.png` |
 | Review con Request Changes | `docs/evidencias/pr-review-request-changes.png` |
-
-Pendiente: añadir un vídeo corto probando la API desde Postman, navegador, Swagger o terminal.
 
 ---
 
@@ -788,13 +787,13 @@ Este archivo incluye, entre otros:
 | Pipeline Deploy | Completado |
 | Secrets configurados | Completado |
 | Ruleset sobre `main` | Completado |
-| Pull Requests con review | Pendiente de completar mínimo 3 integrados |
+| Pull Requests con review | Completado |
 | Render Blueprint | Completado |
 | Servicio desplegado en Render | Completado |
-| README completo | En progreso |
+| README completo | Completado |
 | Rollback documentado | Completado |
-| Evidencias | En progreso |
-| Issues documentados | En progreso |
+| Evidencias | Completado |
+| Issues documentados | Completado |
 
 ---
 
