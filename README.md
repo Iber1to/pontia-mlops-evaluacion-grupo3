@@ -124,7 +124,7 @@ https://github.com/Iber1to/pontia-mlops-evaluacion-grupo3
 │       ├── pr-review-approve.png
 │       └── pr-review-request-changes.png
 │
-├── model_tests/
+├── model_tests/ --> tests
 │   └── test_model.py
 │
 ├── models/
